@@ -1,0 +1,36 @@
+#+ endpoint: http://dbpedia.org/sparql
+
+SELECT DISTINCT ?thing (COUNT(*) as ?count)
+WHERE {
+
+ 
+ {
+  graph ?gbb {
+    # "backward" links distance 2
+    ?TOPIC ?PRED <https://beta.grottocenter.org/api/v1/entrances/20222> .
+    ?thing ?PRED2  ?TOPIC .
+ } }
+ UNION {
+  graph ?gfb {
+    # "forward-backward" links distance 2
+    <https://beta.grottocenter.org/api/v1/entrances/20222> ?PRED3 ?TOPIC2 .
+    ?thing ?PRED4 ?TOPIC2 .
+  }
+ }
+ UNION {
+  graph ?gff {
+    # "forward" links distance 2
+    <https://beta.grottocenter.org/api/v1/entrances/20222> ?PRED41 ?TOPIC3 .
+    ?TOPIC3 ?PRED5 ?thing .
+  }
+ }
+ UNION {
+  graph ?gbf {
+    # "backward-forward" links distance 2
+    ?TOPIC4 ?PRED6 <https://beta.grottocenter.org/api/v1/entrances/20222> .
+    ?TOPIC4 ?PRED7 ?thing . 
+  }
+ }
+}
+GROUP BY ?thing
+ORDER BY DESC(?count)
